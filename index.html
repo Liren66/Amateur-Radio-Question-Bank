@@ -946,8 +946,12 @@ function startExam(cat) {
   const cfg = EXAM_CONFIG[cat];
   const pool = QUESTIONS_DATA[cat];
 
-  // Shuffle and pick questions
-  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  // Fisher-Yates shuffle for uniform randomness
+  const shuffled = [...pool];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
   examQuestions = shuffled.slice(0, cfg.count);
   examAnswers = {};
   examCurrent = 0;
@@ -1081,16 +1085,18 @@ function closeModal() {
 }
 
 function autoSubmit() {
+  if (examSubmitted) return;
   document.getElementById('modal').classList.remove('show');
   submitExam();
 }
 
 function submitExam() {
+  if (examSubmitted) return;
   closeModal();
   if (examTimer) { clearInterval(examTimer); examTimer = null; }
   examSubmitted = true;
 
-  const usedSec = Math.round((Date.now() - examStartTime) / 1000);
+  const usedSec = Math.max(0, Math.round((Date.now() - examStartTime) / 1000));
   const m = Math.floor(usedSec / 60);
   const s = usedSec % 60;
   const timeStr = m + '分' + String(s).padStart(2, '0') + '秒';
@@ -1175,7 +1181,7 @@ function showReview(filter) {
 // ==============================
 function escHtml(str) {
   if (!str) return '';
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 </script>
 </body>

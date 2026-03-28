@@ -517,13 +517,103 @@
       border-color: var(--primary);
     }
 
-    /* Responsive */
+    /* ===== RESPONSIVE ===== */
+
+    /* --- Mobile (max 600px) --- */
     @media (max-width: 600px) {
-      .container { padding: 16px 12px; }
-      .q-card { padding: 16px; }
+      /* Header */
+      .header { padding: 10px 14px; gap: 10px; }
+      .header-logo { font-size: 24px; }
+      .header-title h1 { font-size: 15px; }
+      .header-title p { display: none; }
+      .header-back { padding: 5px 10px; font-size: 13px; }
+
+      /* Container */
+      .container { padding: 12px 10px; }
+
+      /* Category grid – allow single-column on narrow screens */
+      .category-grid { grid-template-columns: 1fr; gap: 14px; }
+      .category-card { padding: 18px 16px; }
+      .category-card h2 { font-size: 16px; }
+      .cat-count { font-size: 12px; }
+
+      /* Info table – horizontal scroll */
+      .info-box { padding: 14px; }
+      .info-table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .info-table { min-width: 480px; }
+
+      /* Study page */
+      .study-header { flex-direction: column; align-items: stretch; gap: 8px; }
+      .study-title { font-size: 17px; }
+      .search-box { width: 100%; }
+
+      /* Topic filter – horizontal scroll instead of wrapping */
+      .topic-filter {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 6px;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border) transparent;
+      }
+      .topic-filter::-webkit-scrollbar { height: 3px; }
+      .topic-filter::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+      .topic-filter span { flex-shrink: 0; }
+      .filter-btn { flex-shrink: 0; }
+
+      /* Question card */
+      .q-card { padding: 14px; }
       .q-text { font-size: 15px; }
-      .exam-timer { font-size: 18px; }
-      .result-card { padding: 20px; }
+      .q-option { padding: 10px 12px; font-size: 14px; min-height: 44px; }
+
+      /* Study nav */
+      .study-nav { flex-direction: column; align-items: stretch; gap: 8px; }
+      .study-nav .btn-group { justify-content: space-between; }
+      .study-nav .page-info { text-align: center; }
+      .study-nav .toggle-group { justify-content: center; }
+
+      /* Exam header */
+      .exam-header { padding: 12px 14px; }
+      .exam-info h2 { font-size: 16px; }
+      .exam-timer { font-size: 20px; }
+
+      /* Question nav dots – smaller to fit more per row */
+      .q-nav-dots { padding: 10px 12px; gap: 5px; }
+      .q-dot { width: 24px; height: 24px; font-size: 10px; }
+
+      /* Exam actions */
+      .exam-actions { flex-direction: column; align-items: stretch; gap: 8px; }
+      .exam-actions .btn-group { justify-content: space-between; }
+      .exam-actions .btn-success { justify-content: center; }
+
+      /* Result */
+      .result-card { padding: 20px 16px; }
+      .result-score-ring { width: 120px; height: 120px; }
+      .result-score-num { font-size: 30px; }
+      .result-verdict { font-size: 20px; }
+
+      /* Buttons – larger touch targets */
+      .btn { min-height: 40px; }
+      .filter-btn { min-height: 32px; }
+    }
+
+    /* --- Tiny screens (max 400px) --- */
+    @media (max-width: 400px) {
+      .header-logo { font-size: 20px; }
+      .header-title h1 { font-size: 13px; }
+      .q-dot { width: 22px; height: 22px; font-size: 9px; }
+      .category-card { padding: 14px 12px; }
+      .btn { padding: 8px 12px; font-size: 13px; }
+      .btn-sm { padding: 7px 10px; font-size: 12px; }
+      .result-details { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* --- Tablet (601px – 900px) --- */
+    @media (min-width: 601px) and (max-width: 900px) {
+      .container { padding: 20px 14px; }
+      .category-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+      .search-box { width: 220px; }
+      .q-option { font-size: 14px; }
     }
   </style>
 </head>
@@ -578,30 +668,32 @@
 
     <div class="info-box">
       <h3>📋 考试说明</h3>
-      <table class="info-table">
-        <thead>
-          <tr>
-            <th>类别</th><th>题目数量</th><th>考试时长</th><th>及格标准</th><th>说明</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><span class="badge badge-a">A 类</span></td>
-            <td id="info-a-count">40 题</td><td id="info-a-time">40 分钟</td><td id="info-a-pass">答对 ≥ 30 题</td>
-            <td>初级，覆盖法规、基础电学</td>
-          </tr>
-          <tr>
-            <td><span class="badge badge-b">B 类</span></td>
-            <td id="info-b-count">60 题</td><td id="info-b-time">60 分钟</td><td id="info-b-pass">答对 ≥ 45 题</td>
-            <td>中级，含无线电技术、操作规程</td>
-          </tr>
-          <tr>
-            <td><span class="badge badge-c">C 类</span></td>
-            <td id="info-c-count">90 题</td><td id="info-c-time">90 分钟</td><td id="info-c-pass">答对 ≥ 70 题</td>
-            <td>高级，全面技术能力考核</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="info-table-wrapper">
+        <table class="info-table">
+          <thead>
+            <tr>
+              <th>类别</th><th>题目数量</th><th>考试时长</th><th>及格标准</th><th>说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="badge badge-a">A 类</span></td>
+              <td id="info-a-count">40 题</td><td id="info-a-time">40 分钟</td><td id="info-a-pass">答对 ≥ 30 题</td>
+              <td>初级，覆盖法规、基础电学</td>
+            </tr>
+            <tr>
+              <td><span class="badge badge-b">B 类</span></td>
+              <td id="info-b-count">60 题</td><td id="info-b-time">60 分钟</td><td id="info-b-pass">答对 ≥ 45 题</td>
+              <td>中级，含无线电技术、操作规程</td>
+            </tr>
+            <tr>
+              <td><span class="badge badge-c">C 类</span></td>
+              <td id="info-c-count">90 题</td><td id="info-c-time">90 分钟</td><td id="info-c-pass">答对 ≥ 70 题</td>
+              <td>高级，全面技术能力考核</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <p style="font-size:13px;color:var(--text-secondary);margin-top:12px">
         💡 题目类型包含单选题（MC1）和多选题（MC2/MC3/MC4）。多选题需全部选对才能得分。
       </p>

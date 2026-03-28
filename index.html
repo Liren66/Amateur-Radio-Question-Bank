@@ -548,7 +548,7 @@
         <div class="category-badge">A</div>
         <h2>A 类考试</h2>
         <p class="cat-desc">初级操作技术能力 · 适合入门学习者</p>
-        <p class="cat-count">题库共 <span id="count-a">683</span> 题 · 考试抽取 25 题 · 45 分钟 · 70分及格</p>
+        <p class="cat-count" id="cat-count-a">题库共 <span id="count-a">683</span> 题</p>
         <div class="btn-group">
           <button class="btn btn-primary" onclick="startExam('A')">🎯 模拟考试</button>
           <button class="btn btn-outline" onclick="startStudy('A')">📖 学习题目</button>
@@ -558,7 +558,7 @@
         <div class="category-badge">B</div>
         <h2>B 类考试</h2>
         <p class="cat-desc">中级操作技术能力 · 含更多技术内容</p>
-        <p class="cat-count">题库共 <span id="count-b">1143</span> 题 · 考试抽取 75 题 · 90 分钟 · 70分及格</p>
+        <p class="cat-count" id="cat-count-b">题库共 <span id="count-b">1143</span> 题</p>
         <div class="btn-group">
           <button class="btn btn-primary" onclick="startExam('B')">🎯 模拟考试</button>
           <button class="btn btn-outline" onclick="startStudy('B')">📖 学习题目</button>
@@ -568,7 +568,7 @@
         <div class="category-badge">C</div>
         <h2>C 类考试</h2>
         <p class="cat-desc">高级操作技术能力 · 最高级别认证</p>
-        <p class="cat-count">题库共 <span id="count-c">1282</span> 题 · 考试抽取 100 题 · 120 分钟 · 70分及格</p>
+        <p class="cat-count" id="cat-count-c">题库共 <span id="count-c">1282</span> 题</p>
         <div class="btn-group">
           <button class="btn btn-primary" onclick="startExam('C')">🎯 模拟考试</button>
           <button class="btn btn-outline" onclick="startStudy('C')">📖 学习题目</button>
@@ -587,17 +587,17 @@
         <tbody>
           <tr>
             <td><span class="badge badge-a">A 类</span></td>
-            <td>25 题</td><td>45 分钟</td><td>≥ 70 分</td>
+            <td id="info-a-count">40 题</td><td id="info-a-time">40 分钟</td><td id="info-a-pass">答对 ≥ 30 题</td>
             <td>初级，覆盖法规、基础电学</td>
           </tr>
           <tr>
             <td><span class="badge badge-b">B 类</span></td>
-            <td>75 题</td><td>90 分钟</td><td>≥ 70 分</td>
+            <td id="info-b-count">60 题</td><td id="info-b-time">60 分钟</td><td id="info-b-pass">答对 ≥ 45 题</td>
             <td>中级，含无线电技术、操作规程</td>
           </tr>
           <tr>
             <td><span class="badge badge-c">C 类</span></td>
-            <td>100 题</td><td>120 分钟</td><td>≥ 70 分</td>
+            <td id="info-c-count">90 题</td><td id="info-c-time">90 分钟</td><td id="info-c-pass">答对 ≥ 70 题</td>
             <td>高级，全面技术能力考核</td>
           </tr>
         </tbody>
@@ -650,8 +650,8 @@
         <p id="exam-subtitle">25 题 · 单选+多选 · 每题 4 分</p>
       </div>
       <div>
-        <div class="exam-timer" id="exam-timer">45:00</div>
-        <div class="exam-progress-text" id="exam-progress">已答 0/25 题</div>
+        <div class="exam-timer" id="exam-timer">40:00</div>
+        <div class="exam-progress-text" id="exam-progress">已答 0/0 题</div>
       </div>
     </div>
 
@@ -751,9 +751,9 @@ let examStartTime = 0;
 let examSubmitted = false;
 
 const EXAM_CONFIG = {
-  A: { count: 25, minutes: 45, pass: 70 },
-  B: { count: 75, minutes: 90, pass: 70 },
-  C: { count: 100, minutes: 120, pass: 70 }
+  A: { count: 40, minutes: 40, passCorrect: 30, multi: 8, single: 32 },
+  B: { count: 60, minutes: 60, passCorrect: 45, multi: 15, single: 45 },
+  C: { count: 90, minutes: 90, passCorrect: 70, multi: 20, single: 70 }
 };
 
 // ==============================
@@ -764,9 +764,22 @@ window.onload = function() {
     alert('题库数据加载失败，请确保 questions_data.js 文件存在。');
     return;
   }
-  document.getElementById('count-a').textContent = QUESTIONS_DATA['A'].length;
-  document.getElementById('count-b').textContent = QUESTIONS_DATA['B'].length;
-  document.getElementById('count-c').textContent = QUESTIONS_DATA['C'].length;
+  const cats = ['A', 'B', 'C'];
+  cats.forEach(cat => {
+    const len = QUESTIONS_DATA[cat].length;
+    const cfg = EXAM_CONFIG[cat];
+    document.getElementById(`count-${cat.toLowerCase()}`).textContent = len;
+    const catCountEl = document.getElementById(`cat-count-${cat.toLowerCase()}`);
+    if (catCountEl) {
+      catCountEl.textContent = `题库共 ${len} 题 · 考试抽取 ${cfg.count} 题（单选${cfg.single}/多选${cfg.multi}）· ${cfg.minutes} 分钟 · 答对${cfg.passCorrect}题及格`;
+    }
+    const infoCount = document.getElementById(`info-${cat.toLowerCase()}-count`);
+    const infoTime = document.getElementById(`info-${cat.toLowerCase()}-time`);
+    const infoPass = document.getElementById(`info-${cat.toLowerCase()}-pass`);
+    if (infoCount) infoCount.textContent = `${cfg.count} 题（单选${cfg.single}/多选${cfg.multi}）`;
+    if (infoTime) infoTime.textContent = `${cfg.minutes} 分钟`;
+    if (infoPass) infoPass.textContent = `答对 ≥ ${cfg.passCorrect} 题`;
+  });
 };
 
 // ==============================
@@ -940,26 +953,44 @@ function setStudyView(mode) {
 // ==============================
 // EXAM MODE
 // ==============================
+function shuffleInPlace(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
 function startExam(cat) {
   currentCat = cat;
   examSubmitted = false;
   const cfg = EXAM_CONFIG[cat];
   const pool = QUESTIONS_DATA[cat];
 
-  // Fisher-Yates shuffle for uniform randomness
-  const shuffled = [...pool];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  examQuestions = shuffled.slice(0, cfg.count);
+  // Pick questions to satisfy single/multi counts as much as possible
+  const multiQs = pool.filter(q => q.t.length > 1);
+  const singleQs = pool.filter(q => q.t.length <= 1);
+  shuffleInPlace(multiQs);
+  shuffleInPlace(singleQs);
+
+  const pickedMulti = multiQs.slice(0, Math.min(cfg.multi, multiQs.length));
+  let remaining = cfg.count - pickedMulti.length;
+  const pickedSingle = singleQs.slice(0, Math.min(cfg.single, singleQs.length, remaining));
+  remaining = cfg.count - pickedMulti.length - pickedSingle.length;
+
+  // Fallbacks if one type is insufficient
+  const extraMulti = remaining > 0 ? multiQs.slice(pickedMulti.length, pickedMulti.length + remaining) : [];
+  remaining = cfg.count - pickedMulti.length - pickedSingle.length - extraMulti.length;
+  const extraSingle = remaining > 0 ? singleQs.slice(pickedSingle.length, pickedSingle.length + remaining) : [];
+
+  examQuestions = [...pickedMulti, ...pickedSingle, ...extraMulti, ...extraSingle];
+  shuffleInPlace(examQuestions);
   examAnswers = {};
   examCurrent = 0;
 
   const titles = { A: 'A 类模拟考试', B: 'B 类模拟考试', C: 'C 类模拟考试' };
   document.getElementById('exam-title').textContent = titles[cat];
   document.getElementById('exam-subtitle').textContent =
-    `${cfg.count} 题 · ${cfg.minutes} 分钟 · ${cfg.pass} 分及格`;
+    `${cfg.count} 题（单选${cfg.single} / 多选${cfg.multi}）· ${cfg.minutes} 分钟 · 答对 ${cfg.passCorrect} 题及格`;
 
   // Start timer
   if (examTimer) clearInterval(examTimer);
@@ -967,6 +998,7 @@ function startExam(cat) {
   examStartTime = Date.now();
   updateTimer();
   examTimer = setInterval(() => {
+    if (examSubmitted) { clearInterval(examTimer); examTimer = null; return; }
     examSeconds--;
     updateTimer();
     if (examSeconds <= 0) {
@@ -997,7 +1029,7 @@ function renderExamDots() {
     const dot = document.createElement('div');
     dot.className = 'q-dot' + (examAnswers[i] ? ' answered' : '') + (i === examCurrent ? ' current' : '');
     dot.textContent = i + 1;
-    dot.onclick = () => { examCurrent = i; renderExamQuestion(); updateExamDots(); };
+    dot.onclick = () => { if (examSubmitted) return; examCurrent = i; renderExamQuestion(); updateExamDots(); };
     container.appendChild(dot);
   });
 }
@@ -1064,6 +1096,7 @@ function updateExamProgress() {
 }
 
 function examNav(dir) {
+  if (examSubmitted) return;
   examCurrent = Math.max(0, Math.min(examQuestions.length - 1, examCurrent + dir));
   renderExamQuestion();
   updateExamDots();
@@ -1111,14 +1144,15 @@ function submitExam() {
   const total = examQuestions.length;
   const wrong = total - correct;
   const score = Math.round(correct / total * 100);
-  const pass = score >= EXAM_CONFIG[currentCat].pass;
+  const cfg = EXAM_CONFIG[currentCat];
+  const pass = correct >= cfg.passCorrect;
 
   document.getElementById('result-score-num').textContent = score;
   document.getElementById('result-ring').className = 'result-score-ring ' + (pass ? 'pass' : 'fail');
   document.getElementById('result-verdict').textContent = pass ? '🎉 恭喜通过！' : '❌ 未通过';
   document.getElementById('result-verdict').className = 'result-verdict ' + (pass ? 'pass' : 'fail');
   document.getElementById('result-desc').textContent =
-    `${currentCat} 类考试及格线为 ${EXAM_CONFIG[currentCat].pass} 分，您的成绩为 ${score} 分。`;
+    `${currentCat} 类合格标准：答对至少 ${cfg.passCorrect} 题（共 ${total} 题）。本次答对 ${correct} 题，得分 ${score} 分。`;
   document.getElementById('stat-correct').textContent = correct;
   document.getElementById('stat-wrong').textContent = wrong;
   document.getElementById('stat-total').textContent = total;
